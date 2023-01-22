@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareX", "ShareX\ShareX.csproj", "{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		MicrosoftStore|Any CPU = MicrosoftStore|Any CPU
+		MicrosoftStoreDebug|Any CPU = MicrosoftStoreDebug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Steam|Any CPU = Steam|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.MicrosoftStore|Any CPU.ActiveCfg = MicrosoftStore|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.MicrosoftStore|Any CPU.Build.0 = MicrosoftStore|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.MicrosoftStoreDebug|Any CPU.ActiveCfg = MicrosoftStoreDebug|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.MicrosoftStoreDebug|Any CPU.Build.0 = MicrosoftStoreDebug|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.Steam|Any CPU.ActiveCfg = Steam|Any CPU
+		{C5AE4585-E9EC-4FA3-B75A-E1210635ACB6}.Steam|Any CPU.Build.0 = Steam|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DEACF1C2-28EE-44DF-B55E-2234F6137272}
+	EndGlobalSection
+EndGlobal
