@@ -32,7 +32,6 @@ namespace ShareX
         }
 
         public bool IsDragging { get; protected set; }
-        public int Order { get; set; }
 
         public virtual void OnDraw(Graphics g)
         {

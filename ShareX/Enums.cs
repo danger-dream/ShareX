@@ -14,18 +14,6 @@
         NearestNeighbor
     }
     
-    internal enum NodeShape
-    {
-        Square, Circle, Diamond, CustomNode
-    }
-
-    public enum RegionCaptureAction // Localized
-    {
-        SwapToolType,
-        CaptureFullscreen,
-        CaptureActiveMonitor
-    }
-
     public enum ShapeCategory
     {
         Region,

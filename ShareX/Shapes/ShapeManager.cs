@@ -58,33 +58,6 @@ namespace ShareX
 
         public BaseDrawingShape[] DrawingShapes => Shapes.OfType<BaseDrawingShape>().ToArray();
 
-        private BaseShape currentHoverShape;
-
-        public BaseRegionShape CurrentHoverShape
-        {
-            get => (BaseRegionShape)currentHoverShape;
-            private set
-            {
-                if (currentHoverShape != null)
-                {
-                    if (PreviousHoverRectangle == Rectangle.Empty || PreviousHoverRectangle != currentHoverShape.Rectangle)
-                    {
-                        PreviousHoverRectangle = currentHoverShape.Rectangle;
-                    }
-                }
-                else
-                {
-                    PreviousHoverRectangle = Rectangle.Empty;
-                }
-
-                currentHoverShape = value;
-            }
-        }
-
-        public RectangleF PreviousHoverRectangle { get; private set; }
-
-        public bool IsCurrentHoverShapeValid => CurrentHoverShape != null && CurrentHoverShape.IsValidShape;
-
         public bool IsCurrentShapeTypeRegion => IsShapeTypeRegion(CurrentTool);
 
         public bool IsCreating { get; set; }
@@ -433,7 +406,7 @@ namespace ShareX
 
             shape?.OnUpdate();
 
-            UpdateCurrentHoverShape();
+            //UpdateCurrentHoverShape();
 
             UpdateNodes();
         }
@@ -478,17 +451,9 @@ namespace ShareX
             {
                 shape.Rectangle = Rectangle.Empty;
 
-                UpdateCurrentHoverShape();
-
-                if (IsCurrentHoverShapeValid)
-                {
-                    shape.Rectangle = CurrentHoverShape.Rectangle;
-                }
-                else
-                {
-                    DeleteCurrentShape();
-                    shape = null;
-                }
+                //UpdateCurrentHoverShape();
+                DeleteCurrentShape();
+                shape = null;
             }
 
             if (shape == null) return;
@@ -576,55 +541,6 @@ namespace ShareX
             var newRect = CaptureHelpers.CreateRectangle(posOnClick, posNew);
 
             return Form.ClientArea.Contains(newRect.Round()) ? posNew : posCurrent;
-        }
-
-        private void UpdateCurrentHoverShape()
-        {
-            CurrentHoverShape = (BaseRegionShape)CheckHover();
-        }
-
-        private BaseShape CheckHover()
-        {
-            if (IsCursorOnObject || IsCreating || IsMoving || IsResizing) return null;
-            var shape = GetIntersectShape();
-
-            if (shape != null && shape.IsValidShape)
-            {
-                return shape;
-            }
-
-            if (currentTool == ShapeType.DrawingCursor)
-            {
-                return null;
-
-            }
-            if (Options.IsFixedSize && IsCurrentShapeTypeRegion)
-            {
-                var location = Form.ScaledClientMousePosition;
-
-                var rectangleRegionShape = CreateShape(ShapeType.RegionRectangle);
-                rectangleRegionShape.Rectangle = new RectangleF(
-                    new PointF(location.X - (Options.FixedSize.Width / 2),
-                        location.Y - (Options.FixedSize.Height / 2)), Options.FixedSize);
-                return rectangleRegionShape;
-            }
-            else
-            {
-                var window = FindSelectedWindow();
-
-                if (window == null || window.Rectangle.IsEmpty) return null;
-                var hoverArea = Form.RectangleToClient(window.Rectangle);
-
-                var rectangleRegionShape = CreateShape(ShapeType.RegionRectangle);
-                rectangleRegionShape.Rectangle = Rectangle.Intersect(Form.ClientArea, hoverArea);
-                return rectangleRegionShape;
-            }
-
-        }
-
-        public SimpleWindowInfo FindSelectedWindow()
-        {
-            return Windows?.FirstOrDefault(x => x.Rectangle.Contains(InputManager.MousePosition));
         }
 
         public Bitmap RenderOutputImage(Bitmap bmp, PointF offset)

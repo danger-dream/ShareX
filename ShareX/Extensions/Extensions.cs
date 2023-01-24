@@ -44,11 +44,6 @@ namespace ShareX
         }
 
 
-        public static Rectangle Offset(this Rectangle rect, int offset)
-        {
-            return new Rectangle(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
-        }
-
         public static RectangleF Offset(this RectangleF rect, float offset)
         {
             return new RectangleF(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
@@ -73,12 +68,6 @@ namespace ShareX
         public static RectangleF SizeOffset(this RectangleF rect, float offset)
         {
             return rect.SizeOffset(offset, offset);
-        }
-
-
-        public static Bitmap CreateEmptyBitmap(this Image img, PixelFormat pixelFormat)
-        {
-            return img.CreateEmptyBitmap(0, 0, pixelFormat);
         }
 
         public static Bitmap CreateEmptyBitmap(this Image img, int widthOffset = 0, int heightOffset = 0, PixelFormat pixelFormat = PixelFormat.Format32bppArgb)

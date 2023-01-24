@@ -337,18 +337,6 @@ namespace ShareX
                 g.DrawPath(borderPen, regionDrawPath);
                 g.DrawPath(borderDotStaticPen, regionDrawPath);
             }
-
-            // Draw animated rectangle on hover area
-            if (ShapeManager.IsCurrentHoverShapeValid)
-            {
-                
-                using (var hoverDrawPath = new GraphicsPath { FillMode = FillMode.Winding })
-                {
-                    ShapeManager.CurrentHoverShape.AddShapePath(hoverDrawPath, -1);
-                    g.DrawPath(borderPen, hoverDrawPath);
-                    g.DrawPath(borderDotPen, hoverDrawPath);
-                }
-            }
             // Draw animated rectangle on selection area
             if (ShapeManager.IsCurrentShapeTypeRegion && ShapeManager.IsCurrentShapeValid)
             {
@@ -357,57 +345,20 @@ namespace ShareX
             // Draw all regions rectangle info
             if (Options.ShowInfo)
             {
-                // Add hover area to list so rectangle info can be shown
-                if (ShapeManager.IsCurrentShapeTypeRegion && ShapeManager.IsCurrentHoverShapeValid && areas.All(area => area.Rectangle != ShapeManager.CurrentHoverShape.Rectangle))
+                foreach (var regionInfo in areas.Where(regionInfo => regionInfo.Rectangle.IsValid()))
                 {
-                    areas.Add(ShapeManager.CurrentHoverShape);
-                }
-                foreach (var regionInfo in areas)
-                {
-                    if (!regionInfo.Rectangle.IsValid()) continue;
-                    var areaText = GetAreaText(regionInfo.Rectangle);
-                    DrawAreaText(g, areaText, regionInfo.Rectangle);
+                    DrawAreaText(g, GetAreaText(regionInfo.Rectangle), regionInfo.Rectangle);
                 }
             }
             // Draw resize nodes
             ShapeManager.DrawObjects(g);
             // Draw magnifier
             DrawCursorGraphics(g);
-
-            const int offset = 5;
-            var mousePos = ScaledClientMousePosition;
-            PointF left = new PointF(mousePos.X - offset, mousePos.Y), left2 = new PointF(0, mousePos.Y);
-            PointF right = new PointF(mousePos.X + offset, mousePos.Y), right2 = new PointF((ClientArea.Width - 1) / ZoomFactor, mousePos.Y);
-            PointF top = new PointF(mousePos.X, mousePos.Y - offset), top2 = new PointF(mousePos.X, 0);
-            PointF bottom = new PointF(mousePos.X, mousePos.Y + offset), bottom2 = new PointF(mousePos.X, (ClientArea.Height - 1) / ZoomFactor);
-
-            if (left.X - left2.X > 10)
-            {
-                g.DrawLine(borderPen, left, left2);
-                g.DrawLine(borderDotPen, left, left2);
-            }
-
-            if (right2.X - right.X > 10)
-            {
-                g.DrawLine(borderPen, right, right2);
-                g.DrawLine(borderDotPen, right, right2);
-            }
-
-            if (top.Y - top2.Y > 10)
-            {
-                g.DrawLine(borderPen, top, top2);
-                g.DrawLine(borderDotPen, top, top2);
-            }
-
-            if (!(bottom2.Y - bottom.Y > 10)) return;
-            g.DrawLine(borderPen, bottom, bottom2);
-            g.DrawLine(borderDotPen, bottom, bottom2);
         }
 
         internal void DrawRegionArea(Graphics g, RectangleF rect, bool isAnimated)
         {
             g.DrawRectangleProper(borderPen, rect);
-
             g.DrawRectangleProper(isAnimated ? borderDotPen : borderDotStaticPen, rect);
         }
 
@@ -445,9 +396,9 @@ namespace ShareX
 
         private void DrawCursorGraphics(Graphics g)
         {
-            const int cursorOffsetX = 10;
-            const int cursorOffsetY = 10;
-            const int itemGap = 10;
+            const int cursorOffsetX = 30;
+            const int cursorOffsetY = 30;
+            const int itemGap = 0;
             var totalSize = Size.Empty;
 
 
@@ -467,7 +418,7 @@ namespace ShareX
             //  当前鼠标颜色
             var color = ShapeManager.GetCurrentColor();
             var infoText =
-                $"RGB: {color.R}, {color.G}, {color.B}\r\nHex: #{ColorHelpers.ColorToHex(color).ToUpper()}\r\nX: {CurrentPosition.X} Y: {CurrentPosition.Y}";
+                $"RGB: {color.R},{color.G},{color.B}\r\nHex: #{ColorHelpers.ColorToHex(color).ToUpper()}\r\nX: {CurrentPosition.X} Y: {CurrentPosition.Y}";
             var textSize = g.MeasureString(infoText, infoFont).ToSize();
             infoTextRect.Size = new Size(textSize.Width + (infoTextPadding * 2), textSize.Height + (infoTextPadding * 2));
             totalSize.Width = Math.Max(totalSize.Width, infoTextRect.Width);
@@ -488,24 +439,9 @@ namespace ShareX
                 y = mousePos.Y - cursorOffsetY - totalSize.Height;
             }
             var initialTransform = g.Transform;
-            if (Options.UseSquareMagnifier)
-            {
-                g.DrawImage(magnifier, x, y + magnifierPosition, magnifier.Width, magnifier.Height);
-                g.DrawRectangleProper(Pens.White, x - 1, y + magnifierPosition - 1, magnifier.Width + 2, magnifier.Height + 2);
-                g.DrawRectangleProper(Pens.Black, x, y + magnifierPosition, magnifier.Width, magnifier.Height);
-            }
-            else
-            {
-                using (new GraphicsQualityManager(g, true))
-                using (var brush = new TextureBrush(magnifier))
-                {
-                    brush.TranslateTransform(x, y + magnifierPosition);
-
-                    g.FillEllipse(brush, x, y + magnifierPosition, magnifier.Width, magnifier.Height);
-                    g.DrawEllipse(Pens.White, x - 1, y + magnifierPosition - 1, magnifier.Width + 2 - 1, magnifier.Height + 2 - 1);
-                    g.DrawEllipse(Pens.Black, x, y + magnifierPosition, magnifier.Width - 1, magnifier.Height - 1);
-                }
-            }
+            g.DrawImage(magnifier, x, y + magnifierPosition, magnifier.Width, magnifier.Height);
+            g.DrawRectangleProper(Pens.White, x - 1, y + magnifierPosition - 1, magnifier.Width + 2, magnifier.Height + 2);
+            g.DrawRectangleProper(Pens.Black, x, y + magnifierPosition, magnifier.Width, magnifier.Height);
             g.Transform = initialTransform;
             infoTextRect.Location = new Point(x + (totalSize.Width / 2) - (infoTextRect.Width / 2), y + infoTextPosition);
             var padding = new Point(infoTextPadding, infoTextPadding);
@@ -516,8 +452,8 @@ namespace ShareX
 
         private Bitmap Magnifier(Image img, PointF position, int horizontalPixelCount, int verticalPixelCount, int pixelSize)
         {
-            horizontalPixelCount = (horizontalPixelCount | 1).Clamp(1, 101);
-            verticalPixelCount = (verticalPixelCount | 1).Clamp(1, 101);
+            horizontalPixelCount = (horizontalPixelCount | 1).Clamp(1, 200);
+            verticalPixelCount = (verticalPixelCount | 1).Clamp(1, 200);
             pixelSize = pixelSize.Clamp(1, 1000);
 
             if (horizontalPixelCount * pixelSize > ClientArea.Width || verticalPixelCount * pixelSize > ClientArea.Height)
@@ -526,8 +462,8 @@ namespace ShareX
                 pixelSize = 10;
             }
 
-            RectangleF srcRect = new RectangleF(position.X - (horizontalPixelCount / 2) - CanvasRectangle.X,
-                position.Y - (verticalPixelCount / 2) - CanvasRectangle.Y, horizontalPixelCount, verticalPixelCount).Round();
+            RectangleF srcRect = new RectangleF(position.X - ((float)(horizontalPixelCount * 1.5)) - CanvasRectangle.X,
+                position.Y - ((float)(verticalPixelCount * 1.5)) - CanvasRectangle.Y, horizontalPixelCount * 3, verticalPixelCount * 3).Round();
 
             var width = horizontalPixelCount * pixelSize;
             var height = verticalPixelCount * pixelSize;
@@ -542,40 +478,19 @@ namespace ShareX
                     g.Clear(canvasBackgroundColor);
                 }
 
-                g.PixelOffsetMode = PixelOffsetMode.Half;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 g.DrawImage(img, new Rectangle(0, 0, width, height), srcRect, GraphicsUnit.Pixel);
                 g.PixelOffsetMode = PixelOffsetMode.None;
 
-                using (var crosshatchBrush = new SolidBrush(Color.FromArgb(125, Color.LightBlue)))
+                using (var crosshatchBrush = new SolidBrush(Color.FromArgb(125, 0, 150, 141)))
                 {
+                    pixelSize = 3;
                     g.FillRectangle(crosshatchBrush, new Rectangle(0, (height - pixelSize) / 2, (width - pixelSize) / 2, pixelSize)); // Left
                     g.FillRectangle(crosshatchBrush, new Rectangle((width + pixelSize) / 2, (height - pixelSize) / 2, (width - pixelSize) / 2, pixelSize)); // Right
                     g.FillRectangle(crosshatchBrush, new Rectangle((width - pixelSize) / 2, 0, pixelSize, (height - pixelSize) / 2)); // Top
                     g.FillRectangle(crosshatchBrush, new Rectangle((width - pixelSize) / 2, (height + pixelSize) / 2, pixelSize, (height - pixelSize) / 2)); // Bottom
                 }
-
-                using (var pen = new Pen(Color.FromArgb(75, Color.Black)))
-                {
-                    for (var x = 1; x < horizontalPixelCount; x++)
-                    {
-                        g.DrawLine(pen, new Point((x * pixelSize) - 1, 0), new Point((x * pixelSize) - 1, height - 1));
-                    }
-
-                    var y = 1;
-                    for (; y < verticalPixelCount; y++)
-                    {
-                        g.DrawLine(pen, new Point(0, (y * pixelSize) - 1), new Point(width - 1, (y * pixelSize) - 1));
-                    }
-                }
-
-                g.DrawRectangle(Pens.Black, ((width - pixelSize) / 2) - 1, ((height - pixelSize) / 2) - 1, pixelSize, pixelSize);
-
-                if (pixelSize >= 6)
-                {
-                    g.DrawRectangle(Pens.White, (width - pixelSize) / 2, (height - pixelSize) / 2, pixelSize - 2, pixelSize - 2);
-                }
             }
-
             return bmp;
         }
 
