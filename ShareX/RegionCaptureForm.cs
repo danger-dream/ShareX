@@ -1,13 +1,11 @@
 using ShareX.Properties;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Windows.Forms;
 
 namespace ShareX
@@ -74,9 +72,11 @@ namespace ShareX
             textOuterBorderPen = new Pen(textOuterBorderColor);
             textInnerBorderPen = new Pen(textInnerBorderColor);
 
-            ShapeManager = new ShapeManager(this);
-            ShapeManager.WindowCaptureMode = true;
-            ShapeManager.IncludeControls = true;
+            ShapeManager = new ShapeManager(this)
+            {
+                WindowCaptureMode = true,
+                IncludeControls = true
+            };
             var cursorData = new CursorData();
             ShapeManager.AddCursor(cursorData.ToBitmap(), PointToClient(cursorData.DrawPosition));
             InitBackground(canvas);

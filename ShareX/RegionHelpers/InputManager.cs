@@ -26,10 +26,5 @@ namespace ShareX
         {
             return mouseState.Buttons.HasFlag(button);
         }
-
-        public bool IsBeforeMouseDown(MouseButtons button)
-        {
-            return oldMouseState.Buttons.HasFlag(button);
-        }
     }
 }

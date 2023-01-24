@@ -14,9 +14,6 @@ namespace ShareX
 
         public bool QuickCrop = true;
         public int MinimumSize = DefaultMinimumSize;
-        public RegionCaptureAction RegionCaptureActionMiddleClick = RegionCaptureAction.SwapToolType;
-        public RegionCaptureAction RegionCaptureActionX1Click = RegionCaptureAction.CaptureFullscreen;
-        public RegionCaptureAction RegionCaptureActionX2Click = RegionCaptureAction.CaptureActiveMonitor;
         public bool UseDimming = true;
         public List<SnapSize> SnapSizes = new List<SnapSize>()
         {

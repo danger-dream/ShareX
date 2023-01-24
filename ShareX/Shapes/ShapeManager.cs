@@ -232,27 +232,10 @@ namespace ShareX
                     DeleteCurrentShape();
                     EndRegionSelection();
                 }
-                else if (IsShapeIntersect())
-                {
-                    DeleteIntersectShape();
-                }
                 else
                 {
                     Form.CloseWindow();
                 }
-            }
-            else if (e.Button == MouseButtons.Middle)
-            {
-                RunAction(Options.RegionCaptureActionMiddleClick);
-
-            }
-            else if (e.Button == MouseButtons.XButton1)
-            {
-                RunAction(Options.RegionCaptureActionX1Click);
-            }
-            else if (e.Button == MouseButtons.XButton2)
-            {
-                RunAction(Options.RegionCaptureActionX2Click);
             }
         }
 
@@ -442,36 +425,6 @@ namespace ShareX
         {
             if (IsCreating) return;
             CurrentShape?.OnMoved();
-        }
-
-        private void RunAction(RegionCaptureAction action)
-        {
-            switch (action)
-            {
-                case RegionCaptureAction.CancelCapture:
-                    Form.CloseWindow();
-                    break;
-                case RegionCaptureAction.RemoveShapeCancelCapture:
-                    if (IsShapeIntersect())
-                    {
-                        DeleteIntersectShape();
-                    }
-                    else
-                    {
-                        Form.CloseWindow();
-                    }
-                    break;
-                case RegionCaptureAction.RemoveShape:
-                    DeleteIntersectShape();
-                    break;
-                case RegionCaptureAction.SwapToolType:
-                    break;
-                case RegionCaptureAction.CaptureFullscreen:
-                case RegionCaptureAction.CaptureActiveMonitor:
-                case RegionCaptureAction.CaptureLastRegion:
-                    Form.CloseWindow();
-                    break;
-            }
         }
 
         public void Update()
@@ -732,11 +685,6 @@ namespace ShareX
             DeleteShape(CurrentShape);
         }
 
-        private void DeleteIntersectShape()
-        {
-            DeleteShape(GetIntersectShape());
-        }
-
         private void DeleteAllShapes()
         {
             if (Shapes.Count <= 0) return;
@@ -774,11 +722,6 @@ namespace ShareX
             }
 
             return null;
-        }
-
-        public bool IsShapeIntersect()
-        {
-            return GetIntersectShape() != null;
         }
 
 

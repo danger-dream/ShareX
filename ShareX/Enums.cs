@@ -21,13 +21,9 @@
 
     public enum RegionCaptureAction // Localized
     {
-        CancelCapture,
-        RemoveShapeCancelCapture,
-        RemoveShape,
         SwapToolType,
         CaptureFullscreen,
-        CaptureActiveMonitor,
-        CaptureLastRegion
+        CaptureActiveMonitor
     }
 
     public enum ShapeCategory
